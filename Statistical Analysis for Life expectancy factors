@@ -1,0 +1,980 @@
+
+R version 4.4.0 (2024-04-24 ucrt) -- "Puppy Cup"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> LED <- read.csv('LED1.csv')
+> LED <- na.omit(LED)
+> library(dplyr)
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+> LED <- distinct(LED)
+> 
+> # Build full model
+> Model_Total <- lm(Life.expectancy ~ Adult.Mortality + infant.deaths + Alcohol + 
++                   percentage.expenditure + Hepatitis.B + Measles + BMI + 
++                   under.five.deaths + Polio + Total.expenditure + GDP + 
++                   Population + thinness..1.19.years + thinness.5.9.years + 
++                   Diphtheria + HIV.AIDS + Income.composition.of.resources + 
++                   Schooling, data = LED)
+> par(mfrow = c(2, 2))
+> plot(Model_Total)
+> summary(Model_Total)
+
+Call:
+lm(formula = Life.expectancy ~ Adult.Mortality + infant.deaths + 
+    Alcohol + percentage.expenditure + Hepatitis.B + Measles + 
+    BMI + under.five.deaths + Polio + Total.expenditure + GDP + 
+    Population + thinness..1.19.years + thinness.5.9.years + 
+    Diphtheria + HIV.AIDS + Income.composition.of.resources + 
+    Schooling, data = LED)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-7.9622 -1.3320  0.1895  1.3998  7.1548 
+
+Coefficients:
+                                  Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                      5.488e+01  2.376e+00  23.096  < 2e-16 ***
+Adult.Mortality                 -4.171e-02  4.608e-03  -9.050  4.5e-15 ***
+infant.deaths                    1.823e-03  1.618e-03   1.127 0.262201    
+Alcohol                         -1.130e-01  9.349e-02  -1.209 0.229219    
+percentage.expenditure           9.003e-04  9.201e-04   0.979 0.329898    
+Hepatitis.B                     -1.923e-02  2.198e-02  -0.875 0.383576    
+Measles                          2.020e-06  2.839e-06   0.711 0.478236    
+BMI                              9.419e-02  3.206e-02   2.938 0.004003 ** 
+under.five.deaths               -1.662e-03  1.128e-03  -1.474 0.143223    
+Polio                           -2.451e-02  4.602e-02  -0.533 0.595314    
+Total.expenditure                2.735e-02  1.539e-01   0.178 0.859272    
+GDP                             -5.152e-05  1.440e-04  -0.358 0.721139    
+Population                       8.114e-09  1.619e-08   0.501 0.617308    
+thinness..1.19.years            -1.328e-01  2.787e-01  -0.476 0.634742    
+thinness.5.9.years               2.659e-01  2.781e-01   0.956 0.340952    
+Diphtheria                       1.210e-01  4.509e-02   2.683 0.008379 ** 
+HIV.AIDS                        -1.994e-01  6.795e-02  -2.935 0.004038 ** 
+Income.composition.of.resources  1.011e+01  2.941e+00   3.436 0.000824 ***
+Schooling                        3.844e-01  1.827e-01   2.104 0.037614 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 2.434 on 114 degrees of freedom
+Multiple R-squared:  0.9402,    Adjusted R-squared:  0.9308 
+F-statistic: 99.64 on 18 and 114 DF,  p-value: < 2.2e-16
+
+> # Pairwise correlation matrix
+> Mat_Total <- cbind(LED$Life.expectancy, LED$Adult.Mortality, LED$infant.deaths,
++                    LED$Alcohol, LED$percentage.expenditure, LED$Hepatitis.B,
++                    LED$Measles, LED$BMI, LED$under.five.deaths, LED$Polio,
++                    LED$Total.expenditure, LED$GDP, LED$Population,
++                    LED$thinness..1.19.years, LED$thinness.5.9.years,
++                    LED$Diphtheria, LED$HIV.AIDS, 
++                    LED$Income.composition.of.resources, LED$Schooling)
+> pairs(Mat_Total, col = "blue")
+> 
+> # Correlation matrix
+> data_numeric <- LED[, sapply(LED, is.numeric)]
+> cor_matrix <- cor(data_numeric, use = "complete.obs")
+> print(cor_matrix)
+                                           X Life.expectancy Adult.Mortality
+X                                1.000000000     -0.06148359      0.10210556
+Life.expectancy                 -0.061483594      1.00000000     -0.87768663
+Adult.Mortality                  0.102105559     -0.87768663      1.00000000
+infant.deaths                   -0.030110127     -0.16357988      0.05250816
+Alcohol                         -0.103379073      0.45604747     -0.27643335
+percentage.expenditure          -0.109800901      0.54050474     -0.41690364
+Hepatitis.B                      0.033219181      0.33375219     -0.19093483
+Measles                         -0.013316812     -0.15895132      0.04591247
+BMI                             -0.006530272      0.75487285     -0.61409323
+under.five.deaths               -0.026120694     -0.19005215      0.07229845
+Polio                            0.043913414      0.64054759     -0.44395282
+Total.expenditure                0.013089221      0.27491396     -0.15501702
+Diphtheria                       0.008417782      0.63658809     -0.41725318
+HIV.AIDS                         0.146221077     -0.60007186      0.73109046
+GDP                             -0.110119293      0.58442579     -0.44894760
+Population                      -0.024396282     -0.02356204     -0.02357288
+thinness..1.19.years             0.003243649     -0.50694265      0.39008547
+thinness.5.9.years               0.022993494     -0.49522998      0.39175473
+Income.composition.of.resources -0.039099099      0.81782140     -0.61097265
+Schooling                        0.007856260      0.78251581     -0.55437392
+                                infant.deaths     Alcohol
+X                               -0.0301101274 -0.10337907
+Life.expectancy                 -0.1635798830  0.45604747
+Adult.Mortality                  0.0525081644 -0.27643335
+infant.deaths                    1.0000000000 -0.10864804
+Alcohol                         -0.1086480392  1.00000000
+percentage.expenditure          -0.1169111809  0.58849270
+Hepatitis.B                     -0.2981145252  0.16430024
+Measles                          0.7303787365 -0.05536277
+BMI                             -0.2814196695  0.50482457
+under.five.deaths                0.9969224320 -0.10421643
+Polio                           -0.2240212168  0.39918800
+Total.expenditure               -0.2009217047  0.35679737
+Diphtheria                      -0.2165863802  0.37995144
+HIV.AIDS                         0.0001427714 -0.07165108
+GDP                             -0.1273140672  0.63181066
+Population                       0.9058976901 -0.03838938
+thinness..1.19.years             0.5360800208 -0.47794515
+thinness.5.9.years               0.5389765780 -0.46265129
+Income.composition.of.resources -0.1513708818  0.65127316
+Schooling                       -0.1981822437  0.67240254
+                                percentage.expenditure Hepatitis.B     Measles
+X                                          -0.10980090  0.03321918 -0.01331681
+Life.expectancy                             0.54050474  0.33375219 -0.15895132
+Adult.Mortality                            -0.41690364 -0.19093483  0.04591247
+infant.deaths                              -0.11691118 -0.29811453  0.73037874
+Alcohol                                     0.58849270  0.16430024 -0.05536277
+percentage.expenditure                      1.00000000  0.01514985 -0.11994384
+Hepatitis.B                                 0.01514985  1.00000000 -0.24466322
+Measles                                    -0.11994384 -0.24466322  1.00000000
+BMI                                         0.41931889  0.24880375 -0.28821102
+under.five.deaths                          -0.12053820 -0.31196601  0.73925822
+Polio                                       0.31322254  0.73385427 -0.20130667
+Total.expenditure                           0.33182195  0.21788045 -0.18393782
+Diphtheria                                  0.30687034  0.75026433 -0.19787752
+HIV.AIDS                                   -0.15157370 -0.14736421  0.01726876
+GDP                                         0.98060094  0.03884840 -0.12600810
+Population                                 -0.04173039 -0.22206840  0.52392220
+thinness..1.19.years                       -0.37420026 -0.21062210  0.32472532
+thinness.5.9.years                         -0.37370104 -0.21960224  0.32546299
+Income.composition.of.resources             0.58199698  0.28250267 -0.14248410
+Schooling                                   0.57333353  0.34425039 -0.17156306
+                                         BMI under.five.deaths       Polio
+X                               -0.006530272       -0.02612069  0.04391341
+Life.expectancy                  0.754872853       -0.19005215  0.64054759
+Adult.Mortality                 -0.614093228        0.07229845 -0.44395282
+infant.deaths                   -0.281419669        0.99692243 -0.22402122
+Alcohol                          0.504824574       -0.10421643  0.39918800
+percentage.expenditure           0.419318890       -0.12053820  0.31322254
+Hepatitis.B                      0.248803754       -0.31196601  0.73385427
+Measles                         -0.288211017        0.73925822 -0.20130667
+BMI                              1.000000000       -0.29458924  0.49160035
+under.five.deaths               -0.294589239        1.00000000 -0.25099303
+Polio                            0.491600349       -0.25099303  1.00000000
+Total.expenditure                0.413732371       -0.20148294  0.29444644
+Diphtheria                       0.473656560       -0.24438046  0.95083076
+HIV.AIDS                        -0.329245696        0.01215358 -0.21407762
+GDP                              0.473124594       -0.13235623  0.35764215
+Population                      -0.142384534        0.89082800 -0.09665548
+thinness..1.19.years            -0.746247519        0.53749626 -0.35314353
+thinness.5.9.years              -0.749584234        0.53874987 -0.34267733
+Income.composition.of.resources  0.718802796       -0.17283626  0.60194296
+Schooling                        0.755722861       -0.21523778  0.63218685
+                                Total.expenditure   Diphtheria      HIV.AIDS
+X                                      0.01308922  0.008417782  0.1462210769
+Life.expectancy                        0.27491396  0.636588089 -0.6000718563
+Adult.Mortality                       -0.15501702 -0.417253176  0.7310904585
+infant.deaths                         -0.20092170 -0.216586380  0.0001427714
+Alcohol                                0.35679737  0.379951442 -0.0716510844
+percentage.expenditure                 0.33182195  0.306870342 -0.1515736964
+Hepatitis.B                            0.21788045  0.750264334 -0.1473642105
+Measles                               -0.18393782 -0.197877520  0.0172687609
+BMI                                    0.41373237  0.473656560 -0.3292456959
+under.five.deaths                     -0.20148294 -0.244380457  0.0121535831
+Polio                                  0.29444644  0.950830764 -0.2140776245
+Total.expenditure                      1.00000000  0.313080575  0.0779266239
+Diphtheria                             0.31308058  1.000000000 -0.2054093576
+HIV.AIDS                               0.07792662 -0.205409358  1.0000000000
+GDP                                    0.32797031  0.344669370 -0.1729531465
+Population                            -0.15875390 -0.088335822 -0.0541511643
+thinness..1.19.years                  -0.34107092 -0.337079896  0.1988966525
+thinness.5.9.years                    -0.36477568 -0.324397270  0.1977525679
+Income.composition.of.resources        0.29346678  0.598533780 -0.2921699475
+Schooling                              0.36615116  0.616259613 -0.2294965450
+                                        GDP   Population thinness..1.19.years
+X                               -0.11011929 -0.024396282          0.003243649
+Life.expectancy                  0.58442579 -0.023562043         -0.506942646
+Adult.Mortality                 -0.44894760 -0.023572884          0.390085466
+infant.deaths                   -0.12731407  0.905897690          0.536080021
+Alcohol                          0.63181066 -0.038389376         -0.477945149
+percentage.expenditure           0.98060094 -0.041730392         -0.374200258
+Hepatitis.B                      0.03884840 -0.222068395         -0.210622096
+Measles                         -0.12600810  0.523922204          0.324725319
+BMI                              0.47312459 -0.142384534         -0.746247519
+under.five.deaths               -0.13235623  0.890828000          0.537496257
+Polio                            0.35764215 -0.096655476         -0.353143533
+Total.expenditure                0.32797031 -0.158753897         -0.341070919
+Diphtheria                       0.34466937 -0.088335822         -0.337079896
+HIV.AIDS                        -0.17295315 -0.054151164          0.198896653
+GDP                              1.00000000 -0.043329760         -0.407021980
+Population                      -0.04332976  1.000000000          0.437167570
+thinness..1.19.years            -0.40702198  0.437167570          1.000000000
+thinness.5.9.years              -0.40557329  0.455066683          0.982265961
+Income.composition.of.resources  0.64453973 -0.001285145         -0.528502631
+Schooling                        0.62966370 -0.047261357         -0.534185844
+                                thinness.5.9.years
+X                                       0.02299349
+Life.expectancy                        -0.49522998
+Adult.Mortality                         0.39175473
+infant.deaths                           0.53897658
+Alcohol                                -0.46265129
+percentage.expenditure                 -0.37370104
+Hepatitis.B                            -0.21960224
+Measles                                 0.32546299
+BMI                                    -0.74958423
+under.five.deaths                       0.53874987
+Polio                                  -0.34267733
+Total.expenditure                      -0.36477568
+Diphtheria                             -0.32439727
+HIV.AIDS                                0.19775257
+GDP                                    -0.40557329
+Population                              0.45506668
+thinness..1.19.years                    0.98226596
+thinness.5.9.years                      1.00000000
+Income.composition.of.resources        -0.50720766
+Schooling                              -0.51533831
+                                Income.composition.of.resources   Schooling
+X                                                  -0.039099099  0.00785626
+Life.expectancy                                     0.817821402  0.78251581
+Adult.Mortality                                    -0.610972647 -0.55437392
+infant.deaths                                      -0.151370882 -0.19818224
+Alcohol                                             0.651273164  0.67240254
+percentage.expenditure                              0.581996977  0.57333353
+Hepatitis.B                                         0.282502665  0.34425039
+Measles                                            -0.142484104 -0.17156306
+BMI                                                 0.718802796  0.75572286
+under.five.deaths                                  -0.172836264 -0.21523778
+Polio                                               0.601942963  0.63218685
+Total.expenditure                                   0.293466778  0.36615116
+Diphtheria                                          0.598533780  0.61625961
+HIV.AIDS                                           -0.292169948 -0.22949655
+GDP                                                 0.644539728  0.62966370
+Population                                         -0.001285145 -0.04726136
+thinness..1.19.years                               -0.528502631 -0.53418584
+thinness.5.9.years                                 -0.507207659 -0.51533831
+Income.composition.of.resources                     1.000000000  0.88160294
+Schooling                                           0.881602944  1.00000000
+> 
+> 
+> # Model evaluation metrics
+> anova_Total <- anova(Model_Total)
+> n <- nrow(LED)
+> p <- length(coef(Model_Total))
+> SSE <- sum(Model_Total$residuals^2)
+> sigma2 <- SSE / (n - p)
+> Cp <- (SSE / sigma2) - n + 2 * p
+> print(Cp)
+[1] 19
+> AIC_value <- AIC(Model_Total)
+> BIC_value <- BIC(Model_Total)
+> residuals <- residuals(Model_Total)
+> PRESS <- sum((residuals / (1 - hatvalues(Model_Total)))^2)
+> PRESS
+[1] 931.5627
+> PRESS / n
+[1] 7.004231
+> 
+> 
+> # Reduced model
+> Reduced_Model <- lm(Life.expectancy ~ Adult.Mortality + Diphtheria + HIV.AIDS + 
++                     Income.composition.of.resources + Schooling, data = LED)
+> summary(Reduced_Model)
+
+Call:
+lm(formula = Life.expectancy ~ Adult.Mortality + Diphtheria + 
+    HIV.AIDS + Income.composition.of.resources + Schooling, data = LED)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-7.6763 -1.4995  0.0934  1.3711  6.7111 
+
+Coefficients:
+                                 Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                     55.971174   1.785729  31.344  < 2e-16 ***
+Adult.Mortality                 -0.048320   0.004249 -11.371  < 2e-16 ***
+Diphtheria                       0.089095   0.017327   5.142 1.00e-06 ***
+HIV.AIDS                        -0.162374   0.067198  -2.416 0.017099 *  
+Income.composition.of.resources 11.462595   2.786221   4.114 6.94e-05 ***
+Schooling                        0.580786   0.161773   3.590 0.000471 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 2.54 on 127 degrees of freedom
+Multiple R-squared:  0.9275,    Adjusted R-squared:  0.9246 
+F-statistic: 324.9 on 5 and 127 DF,  p-value: < 2.2e-16
+
+> Cor_red <- LED[, c("Life.expectancy", "Adult.Mortality", "Diphtheria", 
++                    "HIV.AIDS", "Income.composition.of.resources", "Schooling")]
+> cor(Cor_red)
+                                Life.expectancy Adult.Mortality Diphtheria
+Life.expectancy                       1.0000000      -0.8776866  0.6365881
+Adult.Mortality                      -0.8776866       1.0000000 -0.4172532
+Diphtheria                            0.6365881      -0.4172532  1.0000000
+HIV.AIDS                             -0.6000719       0.7310905 -0.2054094
+Income.composition.of.resources       0.8178214      -0.6109726  0.5985338
+Schooling                             0.7825158      -0.5543739  0.6162596
+                                  HIV.AIDS Income.composition.of.resources
+Life.expectancy                 -0.6000719                       0.8178214
+Adult.Mortality                  0.7310905                      -0.6109726
+Diphtheria                      -0.2054094                       0.5985338
+HIV.AIDS                         1.0000000                      -0.2921699
+Income.composition.of.resources -0.2921699                       1.0000000
+Schooling                       -0.2294965                       0.8816029
+                                 Schooling
+Life.expectancy                  0.7825158
+Adult.Mortality                 -0.5543739
+Diphtheria                       0.6162596
+HIV.AIDS                        -0.2294965
+Income.composition.of.resources  0.8816029
+Schooling                        1.0000000
+> plot(Reduced_Model)
+> 
+> 
+> # Pairwise plot of reduced model
+> Mat_red <- cbind(LED$Life.expectancy, LED$Adult.Mortality, LED$Diphtheria,
++                  LED$HIV.AIDS, LED$Income.composition.of.resources, LED$Schooling)
+> pairs(Mat_red, col = "blue")
+> 
+> 
+> # Evaluation metrics for reduced model
+> n <- nrow(LED)
+> p <- length(coef(Reduced_Model))
+> SSE <- sum(Reduced_Model$residuals^2)
+> sigma2 <- SSE / (n - p)
+> Cp <- (SSE / sigma2) - n + 2 * p
+> print(Cp)
+[1] 6
+> AIC_value <- AIC(Reduced_Model)
+> BIC_value <- BIC(Reduced_Model)
+> residuals <- residuals(Reduced_Model)
+> PRESS <- sum((residuals / (1 - hatvalues(Reduced_Model)))^2)
+> PRESS
+[1] 946.637
+> PRESS / n
+[1] 7.117571
+> 
+> # Stepwise selection
+> null_model <- lm(Life.expectancy ~ 1, data = LED)
+> forward_model <- step(null_model, scope = list(lower = null_model, upper = Model_Total), direction = "forward")
+Start:  AIC=592.87
+Life.expectancy ~ 1
+
+                                  Df Sum of Sq     RSS    AIC
++ Adult.Mortality                  1    8708.2  2596.3 399.21
++ Income.composition.of.resources  1    7560.8  3743.7 447.88
++ Schooling                        1    6922.1  4382.4 468.84
++ BMI                              1    6441.7  4862.8 482.67
++ Polio                            1    4638.3  6666.3 524.62
++ Diphtheria                       1    4581.1  6723.4 525.76
++ HIV.AIDS                         1    4070.6  7233.9 535.49
++ GDP                              1    3861.1  7443.4 539.29
++ percentage.expenditure           1    3302.6  8001.9 548.91
++ thinness..1.19.years             1    2905.2  8399.4 555.36
++ thinness.5.9.years               1    2772.5  8532.0 557.44
++ Alcohol                          1    2351.1  8953.4 563.86
++ Hepatitis.B                      1    1259.2 10045.3 579.16
++ Total.expenditure                1     854.4 10450.1 584.41
++ under.five.deaths                1     408.3 10896.2 589.97
++ infant.deaths                    1     302.5 11002.0 591.26
++ Measles                          1     285.6 11018.9 591.46
+<none>                                         11304.5 592.87
++ Population                       1       6.3 11298.2 594.79
+
+Step:  AIC=399.21
+Life.expectancy ~ Adult.Mortality
+
+                                  Df Sum of Sq    RSS    AIC
++ Income.composition.of.resources  1   1430.16 1166.1 294.75
++ Schooling                        1   1429.42 1166.8 294.84
++ Diphtheria                       1   1000.56 1595.7 336.47
++ Polio                            1    886.29 1710.0 345.67
++ BMI                              1    845.89 1750.4 348.77
++ Alcohol                          1    557.53 2038.7 369.05
++ GDP                              1    513.21 2083.1 371.91
++ percentage.expenditure           1    417.09 2179.2 377.91
++ thinness..1.19.years             1    361.11 2235.2 381.29
++ Hepatitis.B                      1    323.96 2272.3 383.48
++ thinness.5.9.years               1    306.07 2290.2 384.52
++ Total.expenditure                1    223.33 2372.9 389.24
++ under.five.deaths                1    182.13 2414.1 391.53
++ Measles                          1    159.49 2436.8 392.77
++ infant.deaths                    1    156.49 2439.8 392.94
++ HIV.AIDS                         1     42.02 2554.2 399.04
+<none>                                         2596.3 399.21
++ Population                       1     22.15 2574.1 400.07
+
+Step:  AIC=294.75
+Life.expectancy ~ Adult.Mortality + Income.composition.of.resources
+
+                         Df Sum of Sq     RSS    AIC
++ Diphtheria              1   238.568  927.54 266.31
++ Polio                   1   188.315  977.79 273.33
++ Schooling               1   137.607 1028.50 280.05
++ Hepatitis.B             1   103.266 1062.84 284.42
++ BMI                     1    98.435 1067.67 285.02
++ under.five.deaths       1    55.240 1110.87 290.30
++ Measles                 1    52.314 1113.79 290.65
++ infant.deaths           1    47.362 1118.75 291.24
++ Total.expenditure       1    30.411 1135.70 293.24
++ HIV.AIDS                1    20.474 1145.63 294.40
++ thinness..1.19.years    1    18.529 1147.58 294.62
+<none>                                1166.11 294.75
++ Population              1    15.661 1150.45 294.95
++ thinness.5.9.years      1    14.884 1151.22 295.05
++ percentage.expenditure  1    13.092 1153.01 295.25
++ GDP                     1    11.271 1154.84 295.46
++ Alcohol                 1     0.224 1165.88 296.73
+
+Step:  AIC=266.31
+Life.expectancy ~ Adult.Mortality + Income.composition.of.resources + 
+    Diphtheria
+
+                         Df Sum of Sq    RSS    AIC
++ BMI                     1    82.504 845.04 255.92
++ Schooling               1    70.189 857.35 257.85
++ Measles                 1    25.175 902.36 264.65
++ HIV.AIDS                1    24.687 902.85 264.72
++ percentage.expenditure  1    22.490 905.05 265.05
++ under.five.deaths       1    21.968 905.57 265.12
++ GDP                     1    20.518 907.02 265.34
++ infant.deaths           1    19.434 908.11 265.49
++ thinness..1.19.years    1    15.657 911.88 266.05
+<none>                                927.54 266.31
++ thinness.5.9.years      1    12.534 915.01 266.50
++ Total.expenditure       1     7.496 920.04 267.23
++ Hepatitis.B             1     5.491 922.05 267.52
++ Population              1     5.009 922.53 267.59
++ Polio                   1     1.938 925.60 268.03
++ Alcohol                 1     0.227 927.31 268.28
+
+Step:  AIC=255.92
+Life.expectancy ~ Adult.Mortality + Income.composition.of.resources + 
+    Diphtheria + BMI
+
+                         Df Sum of Sq    RSS    AIC
++ HIV.AIDS                1    32.622 812.41 252.69
++ Schooling               1    28.647 816.39 253.33
++ percentage.expenditure  1    24.837 820.20 253.95
++ GDP                     1    21.098 823.94 254.56
+<none>                                845.04 255.92
++ thinness.5.9.years      1     8.939 836.10 256.51
++ Hepatitis.B             1     7.066 837.97 256.80
++ Measles                 1     5.844 839.19 257.00
++ under.five.deaths       1     5.311 839.72 257.08
++ thinness..1.19.years    1     4.805 840.23 257.16
++ infant.deaths           1     3.860 841.18 257.31
++ Polio                   1     3.592 841.44 257.35
++ Alcohol                 1     3.262 841.77 257.41
++ Total.expenditure       1     0.069 844.97 257.91
++ Population              1     0.058 844.98 257.91
+
+Step:  AIC=252.68
+Life.expectancy ~ Adult.Mortality + Income.composition.of.resources + 
+    Diphtheria + BMI + HIV.AIDS
+
+                         Df Sum of Sq    RSS    AIC
++ Schooling               1    36.333 776.08 248.60
++ percentage.expenditure  1    34.281 778.13 248.95
++ GDP                     1    29.106 783.31 249.83
++ Hepatitis.B             1    12.880 799.53 252.56
+<none>                                812.41 252.69
++ thinness.5.9.years      1     9.457 802.96 253.13
++ thinness..1.19.years    1     5.603 806.81 253.76
++ under.five.deaths       1     4.966 807.45 253.87
++ Measles                 1     4.578 807.84 253.93
++ infant.deaths           1     3.562 808.85 254.10
++ Alcohol                 1     3.013 809.40 254.19
++ Polio                   1     2.203 810.21 254.32
++ Total.expenditure       1     0.950 811.46 254.53
++ Population              1     0.174 812.24 254.66
+
+Step:  AIC=248.6
+Life.expectancy ~ Adult.Mortality + Income.composition.of.resources + 
+    Diphtheria + BMI + HIV.AIDS + Schooling
+
+                         Df Sum of Sq    RSS    AIC
++ percentage.expenditure  1   23.1307 752.95 246.57
++ GDP                     1   18.4405 757.64 247.40
++ Hepatitis.B             1   15.7720 760.31 247.87
++ Alcohol                 1   11.9516 764.13 248.54
+<none>                                776.08 248.60
++ thinness.5.9.years      1    5.9171 770.16 249.58
++ Measles                 1    5.7782 770.30 249.61
++ under.five.deaths       1    5.0208 771.06 249.74
++ Polio                   1    5.0018 771.08 249.74
++ infant.deaths           1    3.4493 772.63 250.01
++ thinness..1.19.years    1    3.3163 772.76 250.03
++ Total.expenditure       1    0.2882 775.79 250.55
++ Population              1    0.2381 775.84 250.56
+
+Step:  AIC=246.58
+Life.expectancy ~ Adult.Mortality + Income.composition.of.resources + 
+    Diphtheria + BMI + HIV.AIDS + Schooling + percentage.expenditure
+
+                       Df Sum of Sq    RSS    AIC
++ Alcohol               1   29.9159 723.03 243.18
++ thinness.5.9.years    1   11.4605 741.49 246.53
+<none>                              752.95 246.57
++ Hepatitis.B           1    9.1127 743.84 246.96
++ thinness..1.19.years  1    6.9588 745.99 247.34
++ Polio                 1    4.1686 748.78 247.84
++ under.five.deaths     1    3.8962 749.05 247.88
++ Measles               1    3.8841 749.07 247.89
++ GDP                   1    2.6590 750.29 248.10
++ infant.deaths         1    2.3769 750.57 248.16
++ Total.expenditure     1    0.2838 752.67 248.53
++ Population            1    0.0237 752.93 248.57
+
+Step:  AIC=243.18
+Life.expectancy ~ Adult.Mortality + Income.composition.of.resources + 
+    Diphtheria + BMI + HIV.AIDS + Schooling + percentage.expenditure + 
+    Alcohol
+
+                       Df Sum of Sq    RSS    AIC
+<none>                              723.03 243.18
++ Hepatitis.B           1    8.5381 714.50 243.60
++ thinness.5.9.years    1    6.1453 716.89 244.05
++ thinness..1.19.years  1    2.8919 720.14 244.65
++ Polio                 1    2.6246 720.41 244.70
++ under.five.deaths     1    2.2178 720.82 244.78
++ Measles               1    1.4152 721.62 244.92
++ infant.deaths         1    1.3630 721.67 244.93
++ GDP                   1    0.7054 722.33 245.05
++ Total.expenditure     1    0.0148 723.02 245.18
++ Population            1    0.0118 723.02 245.18
+> backward_model <- step(Model_Total, direction = "backward")
+Start:  AIC=254.16
+Life.expectancy ~ Adult.Mortality + infant.deaths + Alcohol + 
+    percentage.expenditure + Hepatitis.B + Measles + BMI + under.five.deaths + 
+    Polio + Total.expenditure + GDP + Population + thinness..1.19.years + 
+    thinness.5.9.years + Diphtheria + HIV.AIDS + Income.composition.of.resources + 
+    Schooling
+
+                                  Df Sum of Sq     RSS    AIC
+- Total.expenditure                1      0.19  675.77 252.19
+- GDP                              1      0.76  676.34 252.31
+- thinness..1.19.years             1      1.34  676.93 252.42
+- Population                       1      1.49  677.07 252.45
+- Polio                            1      1.68  677.27 252.49
+- Measles                          1      3.00  678.59 252.75
+- Hepatitis.B                      1      4.53  680.12 253.05
+- thinness.5.9.years               1      5.42  681.01 253.22
+- percentage.expenditure           1      5.67  681.26 253.27
+- infant.deaths                    1      7.52  683.11 253.63
+- Alcohol                          1      8.66  684.25 253.85
+<none>                                          675.59 254.16
+- under.five.deaths                1     12.88  688.46 254.67
+- Schooling                        1     26.22  701.81 257.22
+- Diphtheria                       1     42.66  718.25 260.30
+- HIV.AIDS                         1     51.04  726.63 261.84
+- BMI                              1     51.14  726.73 261.86
+- Income.composition.of.resources  1     69.97  745.56 265.26
+- Adult.Mortality                  1    485.42 1161.01 324.17
+
+Step:  AIC=252.19
+Life.expectancy ~ Adult.Mortality + infant.deaths + Alcohol + 
+    percentage.expenditure + Hepatitis.B + Measles + BMI + under.five.deaths + 
+    Polio + GDP + Population + thinness..1.19.years + thinness.5.9.years + 
+    Diphtheria + HIV.AIDS + Income.composition.of.resources + 
+    Schooling
+
+                                  Df Sum of Sq     RSS    AIC
+- GDP                              1      0.84  676.61 250.36
+- thinness..1.19.years             1      1.24  677.02 250.44
+- Population                       1      1.46  677.23 250.48
+- Polio                            1      1.78  677.56 250.54
+- Measles                          1      2.96  678.74 250.77
+- Hepatitis.B                      1      4.45  680.22 251.07
+- thinness.5.9.years               1      5.26  681.03 251.22
+- percentage.expenditure           1      6.06  681.84 251.38
+- infant.deaths                    1      7.52  683.29 251.66
+- Alcohol                          1      8.47  684.25 251.85
+<none>                                          675.77 252.19
+- under.five.deaths                1     12.86  688.63 252.70
+- Schooling                        1     26.33  702.10 255.28
+- Diphtheria                       1     43.89  719.66 258.56
+- HIV.AIDS                         1     51.77  727.55 260.01
+- BMI                              1     54.57  730.35 260.52
+- Income.composition.of.resources  1     70.09  745.86 263.32
+- Adult.Mortality                  1    487.42 1163.19 322.42
+
+Step:  AIC=250.36
+Life.expectancy ~ Adult.Mortality + infant.deaths + Alcohol + 
+    percentage.expenditure + Hepatitis.B + Measles + BMI + under.five.deaths + 
+    Polio + Population + thinness..1.19.years + thinness.5.9.years + 
+    Diphtheria + HIV.AIDS + Income.composition.of.resources + 
+    Schooling
+
+                                  Df Sum of Sq     RSS    AIC
+- thinness..1.19.years             1      1.36  677.98 248.63
+- Population                       1      1.49  678.10 248.65
+- Polio                            1      2.11  678.72 248.77
+- Measles                          1      2.92  679.54 248.93
+- Hepatitis.B                      1      4.17  680.79 249.18
+- thinness.5.9.years               1      5.43  682.04 249.42
+- infant.deaths                    1      7.53  684.15 249.83
+- Alcohol                          1      9.43  686.04 250.20
+<none>                                          676.61 250.36
+- under.five.deaths                1     12.86  689.47 250.86
+- Schooling                        1     26.17  702.79 253.41
+- percentage.expenditure           1     36.62  713.23 255.37
+- Diphtheria                       1     45.19  721.80 256.96
+- HIV.AIDS                         1     51.26  727.87 258.07
+- BMI                              1     54.02  730.63 258.57
+- Income.composition.of.resources  1     69.79  746.40 261.41
+- Adult.Mortality                  1    489.38 1166.00 320.74
+
+Step:  AIC=248.63
+Life.expectancy ~ Adult.Mortality + infant.deaths + Alcohol + 
+    percentage.expenditure + Hepatitis.B + Measles + BMI + under.five.deaths + 
+    Polio + Population + thinness.5.9.years + Diphtheria + HIV.AIDS + 
+    Income.composition.of.resources + Schooling
+
+                                  Df Sum of Sq     RSS    AIC
+- Population                       1      2.02  680.00 247.02
+- Polio                            1      2.14  680.12 247.05
+- Measles                          1      3.31  681.29 247.27
+- Hepatitis.B                      1      5.01  682.99 247.60
+- infant.deaths                    1      7.45  685.43 248.08
+- Alcohol                          1      8.95  686.92 248.37
+<none>                                          677.98 248.63
+- thinness.5.9.years               1     12.66  690.64 249.09
+- under.five.deaths                1     13.14  691.12 249.18
+- Schooling                        1     26.65  704.63 251.75
+- percentage.expenditure           1     35.60  713.58 253.43
+- Diphtheria                       1     46.33  724.31 255.42
+- HIV.AIDS                         1     52.39  730.37 256.53
+- BMI                              1     53.57  731.55 256.74
+- Income.composition.of.resources  1     71.11  749.09 259.89
+- Adult.Mortality                  1    488.03 1166.01 318.74
+
+Step:  AIC=247.02
+Life.expectancy ~ Adult.Mortality + infant.deaths + Alcohol + 
+    percentage.expenditure + Hepatitis.B + Measles + BMI + under.five.deaths + 
+    Polio + thinness.5.9.years + Diphtheria + HIV.AIDS + Income.composition.of.resources + 
+    Schooling
+
+                                  Df Sum of Sq     RSS    AIC
+- Measles                          1      1.78  681.78 245.37
+- Polio                            1      2.10  682.10 245.43
+- Hepatitis.B                      1      5.43  685.43 246.08
+- Alcohol                          1      9.18  689.18 246.81
+<none>                                          680.00 247.02
+- thinness.5.9.years               1     12.31  692.31 247.41
+- infant.deaths                    1     13.30  693.30 247.60
+- under.five.deaths                1     16.32  696.32 248.18
+- Schooling                        1     28.78  708.79 250.54
+- percentage.expenditure           1     35.05  715.05 251.71
+- Diphtheria                       1     46.70  726.70 253.86
+- BMI                              1     53.17  733.17 255.04
+- HIV.AIDS                         1     55.41  735.41 255.44
+- Income.composition.of.resources  1     73.32  753.32 258.64
+- Adult.Mortality                  1    487.57 1167.57 316.92
+
+Step:  AIC=245.37
+Life.expectancy ~ Adult.Mortality + infant.deaths + Alcohol + 
+    percentage.expenditure + Hepatitis.B + BMI + under.five.deaths + 
+    Polio + thinness.5.9.years + Diphtheria + HIV.AIDS + Income.composition.of.resources + 
+    Schooling
+
+                                  Df Sum of Sq     RSS    AIC
+- Polio                            1      2.13  683.91 243.78
+- Hepatitis.B                      1      5.83  687.61 244.50
+- Alcohol                          1      9.12  690.90 245.14
+<none>                                          681.78 245.37
+- thinness.5.9.years               1     10.57  692.35 245.42
+- infant.deaths                    1     12.50  694.27 245.78
+- under.five.deaths                1     14.89  696.67 246.24
+- Schooling                        1     31.13  712.90 249.31
+- percentage.expenditure           1     33.43  715.21 249.74
+- Diphtheria                       1     47.41  729.18 252.31
+- BMI                              1     53.23  735.01 253.37
+- HIV.AIDS                         1     54.38  736.15 253.58
+- Income.composition.of.resources  1     72.98  754.76 256.89
+- Adult.Mortality                  1    506.69 1188.47 317.28
+
+Step:  AIC=243.78
+Life.expectancy ~ Adult.Mortality + infant.deaths + Alcohol + 
+    percentage.expenditure + Hepatitis.B + BMI + under.five.deaths + 
+    thinness.5.9.years + Diphtheria + HIV.AIDS + Income.composition.of.resources + 
+    Schooling
+
+                                  Df Sum of Sq     RSS    AIC
+- Hepatitis.B                      1      7.15  691.05 243.17
+- Alcohol                          1     10.00  693.91 243.72
+<none>                                          683.91 243.78
+- thinness.5.9.years               1     10.60  694.51 243.83
+- infant.deaths                    1     11.92  695.83 244.08
+- under.five.deaths                1     14.26  698.16 244.53
+- Schooling                        1     29.89  713.80 247.47
+- percentage.expenditure           1     33.99  717.90 248.24
+- BMI                              1     53.50  737.41 251.80
+- HIV.AIDS                         1     56.83  740.74 252.40
+- Income.composition.of.resources  1     74.84  758.75 255.59
+- Diphtheria                       1     93.69  777.59 258.86
+- Adult.Mortality                  1    509.04 1192.95 315.78
+
+Step:  AIC=243.17
+Life.expectancy ~ Adult.Mortality + infant.deaths + Alcohol + 
+    percentage.expenditure + BMI + under.five.deaths + thinness.5.9.years + 
+    Diphtheria + HIV.AIDS + Income.composition.of.resources + 
+    Schooling
+
+                                  Df Sum of Sq     RSS    AIC
+- Alcohol                          1      9.88  700.93 243.05
+<none>                                          691.05 243.17
+- thinness.5.9.years               1     11.28  702.34 243.32
+- infant.deaths                    1     14.85  705.91 244.00
+- under.five.deaths                1     17.04  708.09 244.41
+- Schooling                        1     27.22  718.28 246.31
+- percentage.expenditure           1     44.38  735.43 249.44
+- HIV.AIDS                         1     52.50  743.55 250.91
+- BMI                              1     57.16  748.21 251.74
+- Income.composition.of.resources  1     82.42  773.48 256.15
+- Diphtheria                       1    132.16  823.21 264.44
+- Adult.Mortality                  1    521.79 1212.84 315.98
+
+Step:  AIC=243.05
+Life.expectancy ~ Adult.Mortality + infant.deaths + percentage.expenditure + 
+    BMI + under.five.deaths + thinness.5.9.years + Diphtheria + 
+    HIV.AIDS + Income.composition.of.resources + Schooling
+
+                                  Df Sum of Sq     RSS    AIC
+<none>                                          700.93 243.05
+- thinness.5.9.years               1     17.10  718.03 244.26
+- Schooling                        1     21.13  722.06 245.00
+- infant.deaths                    1     22.29  723.22 245.22
+- under.five.deaths                1     25.79  726.72 245.86
+- percentage.expenditure           1     35.89  736.82 247.70
+- HIV.AIDS                         1     50.02  750.95 250.22
+- BMI                              1     60.87  761.80 252.13
+- Income.composition.of.resources  1     74.30  775.23 254.45
+- Diphtheria                       1    128.34  829.27 263.42
+- Adult.Mortality                  1    580.81 1281.74 321.33
+> 
+> # PCA
+> data_numeric <- LED[, sapply(LED, is.numeric)]
+> pca_result <- prcomp(data_numeric[, -1], scale = TRUE)
+> summary(pca_result)
+Importance of components:
+                          PC1    PC2    PC3    PC4     PC5     PC6     PC7
+Standard deviation     2.8414 1.8617 1.3857 1.2490 1.01866 0.84825 0.76923
+Proportion of Variance 0.4249 0.1824 0.1011 0.0821 0.05461 0.03787 0.03114
+Cumulative Proportion  0.4249 0.6073 0.7084 0.7905 0.84512 0.88299 0.91413
+                           PC8     PC9    PC10    PC11    PC12    PC13    PC14
+Standard deviation     0.65297 0.62990 0.46821 0.40284 0.37812 0.31060 0.25383
+Proportion of Variance 0.02244 0.02088 0.01154 0.00854 0.00753 0.00508 0.00339
+Cumulative Proportion  0.93657 0.95746 0.96899 0.97754 0.98506 0.99014 0.99353
+                          PC15   PC16    PC17    PC18    PC19
+Standard deviation     0.22923 0.1949 0.12571 0.12101 0.04439
+Proportion of Variance 0.00277 0.0020 0.00083 0.00077 0.00010
+Cumulative Proportion  0.99629 0.9983 0.99913 0.99990 1.00000
+> variance_explained <- pca_result$sdev^2 / sum(pca_result$sdev^2)
+> print(variance_explained)
+ [1] 0.4249145113 0.1824184484 0.1010682997 0.0821039620 0.0546145779
+ [6] 0.0378697661 0.0311430705 0.0224407545 0.0208825388 0.0115379009
+[11] 0.0085412646 0.0075250747 0.0050774929 0.0033910257 0.0027655938
+[16] 0.0019996023 0.0008316905 0.0007707322 0.0001036932
+> plot(summary(pca_result)$importance[6,])
+> screeplot(pca_result, type = "lines")
+> pc <- as.data.frame(pca_result$x)
+> cor(pc)
+               PC1           PC2           PC3           PC4           PC5
+PC1   1.000000e+00  4.150643e-16  1.055328e-16 -3.604542e-16 -2.949258e-16
+PC2   4.150643e-16  1.000000e+00 -1.016162e-17 -1.611665e-16  1.931626e-16
+PC3   1.055328e-16 -1.016162e-17  1.000000e+00 -2.147147e-16 -1.365072e-16
+PC4  -3.604542e-16 -1.611665e-16 -2.147147e-16  1.000000e+00  1.193629e-16
+PC5  -2.949258e-16  1.931626e-16 -1.365072e-16  1.193629e-16  1.000000e+00
+PC6   1.581943e-18 -8.908798e-16  9.151260e-17 -4.599552e-16 -2.159509e-16
+PC7  -6.283912e-16  3.256865e-16 -7.783768e-16  2.465541e-16  3.319986e-16
+PC8   3.288532e-16  8.114278e-16  3.655654e-17  4.483202e-16 -4.834277e-16
+PC9  -5.346459e-18 -1.612913e-16 -6.276557e-16  3.219509e-16 -1.433650e-16
+PC10  3.045182e-16  1.836454e-17  2.727015e-16 -8.005009e-16 -4.069826e-16
+PC11  1.337743e-16  3.227301e-16  4.862762e-16 -8.642658e-16  3.551853e-16
+PC12 -2.176243e-16 -6.469659e-16 -4.651719e-16  2.034233e-16 -1.617055e-16
+PC13 -8.259352e-16  1.986833e-16 -3.792900e-18  1.523311e-16 -9.686256e-17
+PC14  1.389502e-15 -9.918926e-16  7.499714e-16  1.331675e-16  7.550134e-16
+PC15  1.760038e-16  1.923804e-16 -3.802128e-16  2.650608e-16 -6.139963e-16
+PC16  6.114899e-16  1.551783e-15  1.192950e-15 -1.383013e-15 -3.295661e-16
+PC17 -1.603711e-16 -4.933897e-16  1.801161e-15  1.397866e-16 -2.013687e-15
+PC18 -1.739469e-16  2.550388e-15  1.706580e-15 -9.447083e-16 -1.252958e-15
+PC19  2.584006e-15 -5.501283e-15 -1.605638e-15  3.827101e-15  2.395938e-15
+               PC6           PC7           PC8           PC9          PC10
+PC1   1.581943e-18 -6.283912e-16  3.288532e-16 -5.346459e-18  3.045182e-16
+PC2  -8.908798e-16  3.256865e-16  8.114278e-16 -1.612913e-16  1.836454e-17
+PC3   9.151260e-17 -7.783768e-16  3.655654e-17 -6.276557e-16  2.727015e-16
+PC4  -4.599552e-16  2.465541e-16  4.483202e-16  3.219509e-16 -8.005009e-16
+PC5  -2.159509e-16  3.319986e-16 -4.834277e-16 -1.433650e-16 -4.069826e-16
+PC6   1.000000e+00 -6.524226e-16  2.766239e-17 -3.787287e-16 -5.307732e-16
+PC7  -6.524226e-16  1.000000e+00 -3.876357e-16 -3.485687e-16  3.119891e-16
+PC8   2.766239e-17 -3.876357e-16  1.000000e+00 -2.167186e-16  1.768707e-16
+PC9  -3.787287e-16 -3.485687e-16 -2.167186e-16  1.000000e+00  7.978402e-16
+PC10 -5.307732e-16  3.119891e-16  1.768707e-16  7.978402e-16  1.000000e+00
+PC11 -1.198850e-16  3.251997e-17 -3.994720e-16  3.636776e-16 -3.494508e-16
+PC12  5.058563e-16  1.297287e-16  1.149247e-16 -3.824820e-16  5.288635e-16
+PC13  9.654733e-17  4.114801e-17  2.711260e-16 -1.763447e-16 -1.439383e-16
+PC14  5.705761e-16 -1.470067e-17  7.571242e-16  3.998663e-16  1.035553e-16
+PC15  1.997015e-16  2.324145e-16  7.393047e-16 -1.858003e-17  3.125628e-16
+PC16 -2.550248e-16 -3.594540e-16 -6.897524e-16  5.472175e-16 -2.253702e-16
+PC17  2.538965e-16  2.119972e-16  2.621337e-16 -6.194652e-17 -1.292755e-15
+PC18  1.584081e-15 -1.313550e-16 -4.998784e-16 -1.028573e-15  1.253141e-15
+PC19 -9.239475e-16 -9.658828e-17 -1.813305e-15 -1.526199e-15 -1.757518e-15
+              PC11          PC12          PC13          PC14          PC15
+PC1   1.337743e-16 -2.176243e-16 -8.259352e-16  1.389502e-15  1.760038e-16
+PC2   3.227301e-16 -6.469659e-16  1.986833e-16 -9.918926e-16  1.923804e-16
+PC3   4.862762e-16 -4.651719e-16 -3.792900e-18  7.499714e-16 -3.802128e-16
+PC4  -8.642658e-16  2.034233e-16  1.523311e-16  1.331675e-16  2.650608e-16
+PC5   3.551853e-16 -1.617055e-16 -9.686256e-17  7.550134e-16 -6.139963e-16
+PC6  -1.198850e-16  5.058563e-16  9.654733e-17  5.705761e-16  1.997015e-16
+PC7   3.251997e-17  1.297287e-16  4.114801e-17 -1.470067e-17  2.324145e-16
+PC8  -3.994720e-16  1.149247e-16  2.711260e-16  7.571242e-16  7.393047e-16
+PC9   3.636776e-16 -3.824820e-16 -1.763447e-16  3.998663e-16 -1.858003e-17
+PC10 -3.494508e-16  5.288635e-16 -1.439383e-16  1.035553e-16  3.125628e-16
+PC11  1.000000e+00  5.917815e-16  1.746804e-16 -4.625969e-16 -7.807509e-16
+PC12  5.917815e-16  1.000000e+00  2.598753e-16 -4.665366e-16  3.952950e-16
+PC13  1.746804e-16  2.598753e-16  1.000000e+00  3.493558e-16  6.180395e-16
+PC14 -4.625969e-16 -4.665366e-16  3.493558e-16  1.000000e+00  2.805412e-16
+PC15 -7.807509e-16  3.952950e-16  6.180395e-16  2.805412e-16  1.000000e+00
+PC16  9.997916e-16 -3.511631e-16 -3.305200e-16  9.325783e-16  7.150622e-16
+PC17 -1.307205e-16  9.456973e-16  1.319697e-16  1.209272e-16 -1.419945e-15
+PC18 -1.368934e-16 -1.275230e-15 -1.241133e-15 -5.988586e-16  1.934574e-15
+PC19  1.932094e-15 -2.313406e-15  3.162428e-15  2.829478e-16  1.679697e-15
+              PC16          PC17          PC18          PC19
+PC1   6.114899e-16 -1.603711e-16 -1.739469e-16  2.584006e-15
+PC2   1.551783e-15 -4.933897e-16  2.550388e-15 -5.501283e-15
+PC3   1.192950e-15  1.801161e-15  1.706580e-15 -1.605638e-15
+PC4  -1.383013e-15  1.397866e-16 -9.447083e-16  3.827101e-15
+PC5  -3.295661e-16 -2.013687e-15 -1.252958e-15  2.395938e-15
+PC6  -2.550248e-16  2.538965e-16  1.584081e-15 -9.239475e-16
+PC7  -3.594540e-16  2.119972e-16 -1.313550e-16 -9.658828e-17
+PC8  -6.897524e-16  2.621337e-16 -4.998784e-16 -1.813305e-15
+PC9   5.472175e-16 -6.194652e-17 -1.028573e-15 -1.526199e-15
+PC10 -2.253702e-16 -1.292755e-15  1.253141e-15 -1.757518e-15
+PC11  9.997916e-16 -1.307205e-16 -1.368934e-16  1.932094e-15
+PC12 -3.511631e-16  9.456973e-16 -1.275230e-15 -2.313406e-15
+PC13 -3.305200e-16  1.319697e-16 -1.241133e-15  3.162428e-15
+PC14  9.325783e-16  1.209272e-16 -5.988586e-16  2.829478e-16
+PC15  7.150622e-16 -1.419945e-15  1.934574e-15  1.679697e-15
+PC16  1.000000e+00  9.497314e-16 -1.616724e-15  6.498354e-16
+PC17  9.497314e-16  1.000000e+00  1.142664e-15 -2.916443e-17
+PC18 -1.616724e-15  1.142664e-15  1.000000e+00 -7.371591e-16
+PC19  6.498354e-16 -2.916443e-17 -7.371591e-16  1.000000e+00
+> final_df <- cbind(LED[c("Country", "Status")], pc)
+> head(final_df)
+      Country     Status        PC1        PC2         PC3         PC4
+1 Afghanistan Developing -4.3446309 -0.2480547 -0.48711072  0.04383174
+2     Albania Developing  2.2357849 -0.1820912  1.57067174 -0.66928997
+3     Algeria Developing  0.6259219  0.3515859  1.26532217 -0.99821747
+4      Angola Developing -3.6784190 -0.8547533 -1.71109974 -0.10427662
+5   Argentina Developing  2.9736416  0.4948096  0.08911729 -0.02118597
+6     Armenia Developing  1.2172822 -0.4140779  0.88243896 -0.93492667
+          PC5         PC6         PC7        PC8         PC9         PC10
+1  1.45930393 -2.51203591  0.41472719 -1.4170363 -0.12468461 -0.795874762
+2 -0.69759047  0.08666735 -0.17701987  0.2289575  0.03174970  0.171690094
+3  0.18071928  0.28394158  0.70142477  0.4645199  0.89612503  0.105314412
+4 -0.01881982  0.96070038 -0.38807965 -0.3281795 -1.48052077 -0.891040490
+5 -0.90464960  0.13644616  0.62260444 -0.3225197 -0.12293650  0.078464206
+6 -0.50004689  0.60111409  0.04598326  0.3012808  0.07581664  0.005729704
+          PC11       PC12       PC13        PC14        PC15        PC16
+1 -0.367016874  0.3820215  0.4346627  0.06540750  0.03300526  0.01658315
+2  0.465143913 -0.5539676  0.1478846 -0.17767999 -0.07927408  0.12785638
+3  0.004933996  0.3530617  0.1694122  0.04359656 -0.21298508  0.15053498
+4 -0.264124497 -0.1225919  0.3228719 -0.27547691 -0.02315542  0.21283944
+5 -0.153838658  0.1563327 -0.4156953 -0.17428249 -0.07613781  0.12604615
+6  0.054429536 -0.3044506  0.2087312 -0.11408453  0.01681360 -0.12057236
+          PC17        PC18          PC19
+1 -0.102007400  0.06344735  0.0355884909
+2  0.092698105  0.02528969 -0.0114805283
+3 -0.001691772  0.06936989 -0.0318156534
+4  0.059667600 -0.09381847  0.0209343656
+5 -0.021412371  0.06173711 -0.0008203678
+6  0.043641059  0.03035569 -0.0087778446
+> 
+> 
+> # Correlation of PCs
+> cor_matrix <- cor(pc)
+> cumulative_variance <- cumsum(pca_result$sdev^2) / sum(pca_result$sdev^2)
+> num_components <- sum(cumulative_variance <= 0.95)
+> pca_components <- pca_result$x[, 1:6]
+> pca_data <- data.frame(Life_Expectancy = LED$Life.expectancy, pca_components)
+> cor(pca_data)
+                Life_Expectancy           PC1           PC2           PC3
+Life_Expectancy      1.00000000  8.527617e-01  3.284148e-01  1.206046e-01
+PC1                  0.85276172  1.000000e+00  4.150643e-16  1.055328e-16
+PC2                  0.32841482  4.150643e-16  1.000000e+00 -1.016162e-17
+PC3                  0.12060463  1.055328e-16 -1.016162e-17  1.000000e+00
+PC4                 -0.27856455 -3.604542e-16 -1.611665e-16 -2.147147e-16
+PC5                  0.08372827 -2.949258e-16  1.931626e-16 -1.365072e-16
+PC6                 -0.06114983  1.581943e-18 -8.908798e-16  9.151260e-17
+                          PC4           PC5           PC6
+Life_Expectancy -2.785645e-01  8.372827e-02 -6.114983e-02
+PC1             -3.604542e-16 -2.949258e-16  1.581943e-18
+PC2             -1.611665e-16  1.931626e-16 -8.908798e-16
+PC3             -2.147147e-16 -1.365072e-16  9.151260e-17
+PC4              1.000000e+00  1.193629e-16 -4.599552e-16
+PC5              1.193629e-16  1.000000e+00 -2.159509e-16
+PC6             -4.599552e-16 -2.159509e-16  1.000000e+00
+> 
+> 
+> # Final PCA-based model
+> mat_pca <- cbind(LED$Life.expectancy, pca_data$PC1, pca_data$PC2, 
++                  pca_data$PC3, pca_data$PC4, pca_data$PC5, pca_data$PC6)
+> pairs(mat_pca, col = "blue")
+> modelpca <- lm(Life_Expectancy ~ ., data = pca_data)
+> summary(modelpca)
+
+Call:
+lm(formula = Life_Expectancy ~ ., data = pca_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-9.7619 -1.3987  0.2498  1.5830  4.7051 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 68.13971    0.20459 333.060  < 2e-16 ***
+PC1          2.77740    0.07228  38.428  < 2e-16 ***
+PC2          1.63249    0.11031  14.799  < 2e-16 ***
+PC3          0.80541    0.14819   5.435 2.73e-07 ***
+PC4         -2.06398    0.16442 -12.553  < 2e-16 ***
+PC5          0.76064    0.20160   3.773 0.000247 ***
+PC6         -0.66713    0.24210  -2.756 0.006728 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 2.359 on 126 degrees of freedom
+Multiple R-squared:  0.938,     Adjusted R-squared:  0.935 
+F-statistic: 317.4 on 6 and 126 DF,  p-value: < 2.2e-16
+
+> n <- nrow(pca_data)
+> p <- length(coef(modelpca)) - 1
+> Mallow_Cp <- (1 / n) * (sum(resid(modelpca)^2) / (sigma(modelpca)^2)) - (n - 2 * p)
+> Mallow_Cp
+[1] -120.0526
+> AIC(modelpca)
+[1] 614.5843
+> BIC(modelpca)
+[1] 637.7071
+> residuals <- residuals(modelpca)
+> PRESS <- sum((residuals / (1 - hatvalues(modelpca)))^2)
+> PRESS
+[1] 807.6244
+> PRESS / n
+[1] 6.072364
+> 
+> save.image("C:\\Users\\mouny\\Downloads\\Factors for Life Expectancy Analysis")
+> 
