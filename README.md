@@ -18,7 +18,10 @@ Importance:
 This analysis helps uncover which health and economic factors are most critical in improving life expectancy. The PCA-based model, in particular, provides a cleaner, more generalizable way to model outcomes without the noise of multicollinearity — making it useful for policy research, health forecasting, and prioritizing global health interventions.
 
 
-This repository contains:
--Python file for cleaning(.ipynb)
--Cleaned LED Dataset (Life Expectancy Data)
--R file
+#This repository contains:
+`LED_Dataset_Cleaning`: Python file for cleaning
+`LED1.csv`: Cleaned LED Dataset (Life Expectancy Data)
+`Statistical Analysis for Life expectancy factors`: R file
+
+#Dataset:
+[Download Dataset from Kaggle](https://www.kaggle.com/datasets/kumarajarshi/life-expectancy-who/data)
